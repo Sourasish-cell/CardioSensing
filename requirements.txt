@@ -1,4 +1,4 @@
-Flask 2.2.3
+Flask 2.1.2
 Werkzeug 2.3.6
 cv2 4.7.0
 cvzone 1.5.6
