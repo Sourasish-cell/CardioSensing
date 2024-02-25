@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Responsive Landing Page Website Design</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/icon.svg" type="image">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/static/images/backimg.jpg');
+            background-color: rgb(36, 45, 23);
+        }
+
+        #bpm_value {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #video-container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        #toggle-camera-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color:rgb(255, 255, 255);
+            border: 2px;
+            border-radius: 5px;
+        }
+        .im{
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- navbar sections starts  -->
+    <header class="header">
+        <div class="logo">
+            <img src="/static/images/icon.svg" alt="logo-bookmark">
+        </div>
+
+        <nav class="navbar">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#download">Detect</a>
+            <!-- <a href="#footer">Contact</a> -->
+            
+            <!-- <a href="#" class="btn">Log in</a> -->
+        </nav>
+
+
+        <div class="fas fa-bars" id="menu-btn"></div>
+    </header>
+ 
+
+
+
+    <div class="features" id="features" style="margin-top: 200px;">
+        <h1>Heart Rate Detection</h1>
+        <p>This page shows your face and calculates the heart rate.</p>
+    </div>
+    <div class="im">
+        <img src="/static/images/heart_measurement.jpg" alt="">
+    </div>
+
+    
+    <div id="video-container" style="margin-top: 20px;">
+        <button id="toggle-camera-btn" onclick="toggleCamera()" style="position: absolute; top: 50%; right: 0;">Toggle Camera</button>
+
+        <img id="video_feed" src="{{ url_for('video_feed') }}" alt="Video Feed">
+    </div>
+    
+    <div style="margin-top: 10px; margin-left: 50%; background-color:yellow">
+        <!-- Add an element to display the calculated heart rate -->
+        <p>Heart Rate: <span id="bpm_value">Loading...</span> BPM</p>
+    </div>
+    
+    
+    <!--scripting part-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function () {
+            console.log('Connected to SocketIO server');
+        });
+
+       socket.on('bpm_update', function(msg) {
+    // Change the text content of the 'bpm_value' element
+    document.getElementById('bpm_value').innerHTML =  msg.bpm;
+       });
+
+       var cameraOn = false;
+
+       // Handle the 'camera_toggled' event
+    socket.on('camera_toggled', function(data) {
+        cameraOn = data.camera_on;
+        if (cameraOn) {
+            // If camera is on, display the image
+            document.getElementById('video_feed').style.display = 'block';
+        } else {
+            // If camera is off, hide the image
+            document.getElementById('video_feed').style.display = 'none';
+        }
+    });
+        function toggleCamera() {
+            socket.emit('toggle_camera');
+        }
+    </script>
+
+
+
+
+   <section class="footer" id="footer">     
+       <div class="credit">created by
+           <a href="#" target="_blank"><span>Our Group</span> | all rights reserved</a>
+       </div>
+   </section>
+
+    <!-- footer section ends -->
+
+
+    <script src="/static/js/main.js"></script>
+</body>
+
+</html>
